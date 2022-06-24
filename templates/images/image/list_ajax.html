@@ -1,0 +1,23 @@
+
+{% load thumbnail %}
+
+{% for image in images %}
+    
+        <div class="card col-md-4"  style="width: 18rem; margin: 1%;">
+        
+                {% thumbnail image.image 300x300 crop="smart" as im %}
+                <img class="card-img-top" src="{{im.url}}" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">{{image.title}}</h5>
+              <div class="text-center">
+
+                <a href="{{image.get_absolute_url}}" class="btn btn-dark ">Detail</a>
+              </div>
+            </div>
+          </div>
+
+ {% endfor %}
+
+
+    
+    

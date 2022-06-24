@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load thumbnail %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'account/user_detail.css' %}">
+{% endblock head %}
+
+
+{% block title %}
+    {{user.username}}
+{% endblock title %}
+
+
+{% block main %}
+
+
+<div class="row py-5 px-4">
+    <div class="col-md-11 mx-auto">
+        <!-- Profile widget -->
+        <div class="bg-white shadow rounded overflow-hidden">
+            <div class="px-4 pt-0 pb-4 cover">
+                <div class="media align-items-end profile-head container">
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="profile mr-3 p-2">
+
+                                {% if user.profile.image %}
+            
+                                <img src=" {% thumbnail user.profile.image 180x180  %} " alt="..." width="130" class="rounded mb-2 img-thumbnail">
+                                {% else %}
+                                <img src="https://meetanentrepreneur.lu/wp-content/uploads/2019/08/profil-linkedin.jpg" alt="..." width="130" class="rounded mb-2 img-thumbnail">
+                                {% endif %}
+                                <br>
+                                
+                                {% if user != request.user %}
+
+                                <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button btn btn-outline-primary btn-sm btn-block">
+                                    {% if request.user not in user.followers.all %}
+                                      Follow
+                                    {% else %}
+                                      Unfollow
+                                    {% endif %}
+                                  </a>
+
+                                  {% endif %}
+                            </div>
+                            
+                        </div>
+
+
+                            <div class="media-body mb-5 text-white">
+                                <h4 class="mt-0 mb-0">{{user.get_full_name}}</h4>
+                                <p class="small mb-5"> <i class="fas fa-map-marker-alt mr-2"></i>{{user.username}}</p>
+                            </div>
+
+
+                </div>
+                </div>
+            </div>
+            <div class="bg-light p-4 d-flex justify-content-end text-center">
+                <ul class="list-inline mt-2">
+                   
+                   
+                   
+                   {% with user.images_created.count as total_image %}
+                       
+                   
+                   <li class="list-inline-item">
+                       <h5 class="font-weight-bold mb-0 d-block"> {{total_image}} </h5><small class="text-muted"> <i class="fas fa-image mr-1"></i>Photo{{total_image|pluralize}}</small>
+                    </li>
+                    
+                    {% endwith %}
+
+                    {% with user.followers.count as total_followers %}
+
+                    
+                    <li class="list-inline-item">
+                        <h5 class="font-weight-bold mb-0 d-block"> <span class="count"> <span class="total"> {{total_followers}} </span> </span>  </h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Follower{{ total_followers|pluralize }}</small>
+                    </li>
+                    
+                    {% endwith %}
+
+
+
+                    
+                    {% with user.following.count as total_following %}
+                        
+                    
+                    <li class="list-inline-item">
+                        <h5 class="font-weight-bold mb-0 d-block"> {{total_following}} </h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Following</small>
+                    </li>
+                    
+                    {% endwith %}
+
+                </ul>
+            </div>
+            <div class="px-4 py-3">
+                <h5 class="mb-0">About</h5>
+                <div class="p-4 rounded shadow-sm bg-light">
+                    <p class="font-italic mb-0">Web Developer</p>
+                    <p class="font-italic mb-0">Lives in New York</p>
+                    <p class="font-italic mb-0">Photographer</p>
+                </div>
+            </div>
+            <div class="py-4 px-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0">Recent photos</h5><a href="#" class="btn btn-link text-muted">Show all</a>
+                </div>
+
+
+                    <div id="image-list" class="image-container row">
+                        {% include "images/image/list_ajax.html" with images=user.images_created.all %}
+                    </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock main %}
+
+
+{% block domready %}
+  $('a.follow').click(function(e){
+    e.preventDefault();
+    $.post('{% url "user_follow" %}',
+      {
+        id: $(this).data('id'),
+        action: $(this).data('action')
+      },
+      function(data){
+        if (data['status'] == 'ok') {
+          var previous_action = $('a.follow').data('action');
+
+          // toggle data-action
+          $('a.follow').data('action',
+            previous_action == 'follow' ? 'unfollow' : 'follow');
+          // toggle link text
+          $('a.follow').text(
+            previous_action == 'follow' ? 'Unfollow' : 'Follow');
+
+          // update total followers
+          var previous_followers = parseInt(
+            $('span.count .total').text());
+          $('span.count .total').text(previous_action == 'follow' ?
+          previous_followers + 1 : previous_followers - 1);
+        }
+      }
+    );
+  });
+{% endblock %}
+    

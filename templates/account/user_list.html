@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load thumbnail %}
+
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css ">
+<link rel="stylesheet" href="{% static 'account/user_list.css' %}">
+
+{% endblock head %}
+    
+
+{% block title %}
+    User lists
+{% endblock title %}
+
+
+{% block main %}
+    <h1>The user lists</h1>
+    <hr>
+
+    <div class="container mt-3 d-flex justify-content-center">
+        <div class="row">
+
+
+            {% for user in users %}
+        
+    
+        
+            <div class="card p-3 m-2">
+                <div class="d-flex align-items-center">
+                    
+                    {% if user.profile.image %}
+                        
+                    <div class="image"> <img src=" {% thumbnail user.profile.image 180x180  %} " class="rounded" width="155"> </div>
+                    {% else %}
+                    <div class="image"> <img src="https://meetanentrepreneur.lu/wp-content/uploads/2019/08/profil-linkedin.jpg" class="rounded" width="155"> </div>
+                    
+                    {% endif %}
+    
+                    <div class="m-2 w-100">
+                        <h4 class="mb-0 mt-0">{{ user.get_full_name }}</h4> <span> {{user.username}} </span>
+                     
+                        <div class="button mt-2 d-flex flex-row align-items-center"> <a href="{{user.get_absolute_url}}" class="btn btn-sm btn-dark w-100 ml-2">See profile</a> </div>
+                    </div>
+                </div>
+            </div>
+    
+    
+            {% endfor %}
+
+
+        </div>
+
+        
+    </div>
+{% endblock main %}
+
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+{% endblock js %}
+    

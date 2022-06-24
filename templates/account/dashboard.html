@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    dashboard
+{% endblock title %}
+    
+
+
+{% block main %}
+    <div class="container mt-5">
+        <h1>Dashboard</h1>
+        <p>Welcome <b> {{request.user.username}}</b> </p>
+        {% with total_images_created=request.user.images_created.count %}
+    <p>Welcome to your dashboard. You have bookmarked {{ total_images_created }} image{{ total_images_created|pluralize }}.</p>
+  {% endwith %}
+
+  <p>Drag the following button to your bookmarks toolbar to bookmark images from other websites → <a href="javascript:{% include 'bookmarklet_launcher.js' %}" class="btn btn-primary">Bookmark it</a></p>
+        
+              
+        <p><a href="{% url 'edit' %}">edit your profile</a></p>
+    </div>
+
+
+<h2>What's happening </h2>
+<div>
+    
+    {% for action in actions %}
+        {% include 'actions/detail.html' %}
+    {% endfor %}
+        
+</div>
+{% endblock main %}
+    
